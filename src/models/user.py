@@ -2,12 +2,14 @@
 
 from pydantic import BaseModel
 
+
 class Address(BaseModel):
     street: str
     city: str
     state: str
     country: str
     postal_code: str
+
 
 class UserRegister(BaseModel):
     first_name: str
@@ -18,9 +20,11 @@ class UserRegister(BaseModel):
     password: str
     email: str
 
+
 class UserLogin(BaseModel):
     email: str
     password: str
+
 
 class AuthResponse(BaseModel):
     access_token: str

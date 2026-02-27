@@ -2,6 +2,7 @@
 
 import requests
 
+
 class APIClient:
     def __init__(self, base_url):
         self.base_url = base_url
@@ -14,5 +15,3 @@ class APIClient:
 
     def delete(self, path):
         return requests.delete(self.base_url + path)
-
-

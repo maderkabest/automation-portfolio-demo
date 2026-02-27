@@ -2,6 +2,7 @@
 
 from src.api.client import APIClient
 
+
 class ProductService:
     def __init__(self, client: APIClient):
         self.client = client

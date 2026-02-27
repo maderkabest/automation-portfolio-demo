@@ -3,6 +3,7 @@
 from src.api.client import APIClient
 from src.models.user import UserRegister, UserLogin
 
+
 class AuthService:
     def __init__(self, client: APIClient):
         self.client = client

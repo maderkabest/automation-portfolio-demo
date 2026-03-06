@@ -29,8 +29,31 @@ jobs:
     - name: Run Mypy
       run: mypy src
 
-  integration-tests:
-    name: "API & Integration Tests"
+  api-tests:
+    name: "API Tests"
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pytest (API)
+        run: pytest tests/api/  -v
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+
+  integration-tests:  
+    name: "Integration Tests"
     needs: lint
     runs-on: ubuntu-latest
     services: 
@@ -62,7 +85,7 @@ jobs:
           PGPASSWORD: testpass
 
       - name: Run Pytest (API + integration)
-        run: pytest tests/api/ tests/integration/ -v
+        run: pytest tests/integration/ -v
         env:
           BASE_URL: ${{ vars.BASE_URL }}
           DB_HOST: localhost
@@ -92,10 +115,21 @@ jobs:
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
         
-      - name: Check site availability
-        run: curl -I https://practicesoftwaretesting.com
+      - name: Check site availability and Cloudflare blocks
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -I ${{ vars.UI_URL }})
+          echo "Website returned status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "403" ]; then
+            echo "Cloudflare protection detected (403 Forbidden)."
+            echo "Skipping UI tests on CI to avoid bot-challenge failures."
+            echo "blocked=true" >> $GITHUB_ENV
+          else
+            echo "Site is accessible. Proceeding with UI tests."
+            echo "blocked=false" >> $GITHUB_ENV
+          fi
 
       - name: Run Pytest (UI + Hybrid)
+        if: env.blocked == 'false'
         run: pytest tests/ui/ tests/hybrid/ 
         env:
           BASE_URL: ${{ vars.BASE_URL }}
@@ -107,7 +141,15 @@ jobs:
         with:
           name: playwright-screenshots
           path: test-results/
-          if-no-files-found: ignore
+
+      - name: Report CI Limitation
+        if: env.blocked == 'true'
+        run: |
+          echo "### ⚠️ UI Tests Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "Target website (`${{ vars.UI_URL }}`) is protected by Cloudflare." >> $GITHUB_STEP_SUMMARY
+          echo "GitHub Actions IP addresses are blocked by default (cf-mitigated: challenge)." >> $GITHUB_STEP_SUMMARY
+          echo "To run these tests, execute them locally." >> $GITHUB_STEP_SUMMARY
+
 
      
       

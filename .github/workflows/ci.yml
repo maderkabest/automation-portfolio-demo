@@ -30,7 +30,7 @@ jobs:
       run: mypy src
 
   integration-tests:
-    name: "API & Integration Tests (PostgreSQL)"
+    name: "API & Integration Tests"
     needs: lint
     runs-on: ubuntu-latest
     services: 
@@ -91,6 +91,9 @@ jobs:
 
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
+        
+      - name: Check site availability
+        run: curl -I https://practicesoftwaretesting.com
 
       - name: Run Pytest (UI + Hybrid)
         run: pytest tests/ui/ tests/hybrid/ 

@@ -15,7 +15,7 @@ class CheckoutPage(BasePage):
         self.page.get_by_role("button", name="Proceed to checkout").click()
 
     def payment_method(self, method):
-        self.page.locator("select").selectOption(method)
+        self.page.locator("select").select_option(method)
 
     def confirm(self):
         self.page.get_by_role("button", name="Confirm").click()

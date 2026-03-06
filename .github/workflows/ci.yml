@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -28,9 +28,77 @@ jobs:
     - name: Run Mypy
       run: mypy src
 
-    - name: Run Pytest (Tests)
-      run: pytest tests/api/
-      env:
+  integration-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    services: 
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pytest (API + integration)
+        run: pytest tests/api/ tests/integration/ -v
+        env:
           BASE_URL: ${{ vars.BASE_URL }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: testdb
+          DB_USER: testuser
+          DB_PASSWORD: testpass
+
+  ui-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run Pytest (UI + Hybrid)
+        run: pytest tests/ui/ tests/hybrid/
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+          UI_URL: ${{ vars.UI_URL }}
+
+      - name: Upload Playwright artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: test-results/
+
+     
+      
+
 
 

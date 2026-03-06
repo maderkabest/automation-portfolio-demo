@@ -58,6 +58,8 @@ def test_e2e_checkout_flow_with_api_setup_and_api_assertion(enter_user, browser)
     product_id = next(p["id"] for p in products if p["in_stock"] is True)
 
     page = browser
+    page.goto(ui_url)
+    page.wait_for_load_state("networkidle")
     page.evaluate("localStorage.clear()")
     page.evaluate(f"localStorage.setItem('auth-token', '{token}')")
     page.goto(f"{ui_url}/product/{product_id}")

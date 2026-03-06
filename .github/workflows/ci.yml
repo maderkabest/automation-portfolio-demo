@@ -7,6 +7,7 @@ on:
 
 jobs:
   lint:
+    name: "Lint (Ruff + Mypy)"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -29,6 +30,7 @@ jobs:
       run: mypy src
 
   integration-tests:
+    name: "API & Integration Tests (PostgreSQL)"
     needs: lint
     runs-on: ubuntu-latest
     services: 
@@ -54,6 +56,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Init database schema
+        run: psql -h  localhost -U testuser -d testdb -f docker/init.sql
+        env:
+          PGPASSWORD: testpass
+
       - name: Run Pytest (API + integration)
         run: pytest tests/api/ tests/integration/ -v
         env:
@@ -65,6 +72,7 @@ jobs:
           DB_PASSWORD: testpass
 
   ui-tests:
+    name: "UI & Hybrid Tests (Playwright)"
     needs: lint
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +93,7 @@ jobs:
         run: playwright install --with-deps chromium
 
       - name: Run Pytest (UI + Hybrid)
-        run: pytest tests/ui/ tests/hybrid/
+        run: pytest tests/ui/ tests/hybrid/ 
         env:
           BASE_URL: ${{ vars.BASE_URL }}
           UI_URL: ${{ vars.UI_URL }}
@@ -96,6 +104,7 @@ jobs:
         with:
           name: playwright-screenshots
           path: test-results/
+          if-no-files-found: ignore
 
      
       

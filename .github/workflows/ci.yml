@@ -95,7 +95,7 @@ jobs:
           DB_PASSWORD: testpass
 
   ui-tests:
-    name: "UI & Hybrid Tests (Playwright)"
+    name: "UI & Hybrid Tests"
     needs: lint
     runs-on: ubuntu-latest
     steps:
@@ -136,7 +136,7 @@ jobs:
           UI_URL: ${{ vars.UI_URL }}
 
       - name: Upload Playwright artifacts on failure
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots

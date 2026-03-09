@@ -56,9 +56,12 @@ def enter_user():
 def browser():
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context()
+        context.tracing.start(screenshots=True, snapshots=True, sources=True)
+        page = context.new_page()
         page.set_default_timeout(60000)
         yield page
+        context.tracing.stop(path="test-results/trace.zip")
         browser.close()
 
 

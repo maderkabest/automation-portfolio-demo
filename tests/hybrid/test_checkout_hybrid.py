@@ -1,17 +1,17 @@
-"""Hybrid tests: API setup → UI actions → DB assertions."""
+"""Hybrid tests: API setup → UI actions → API assertions."""
 
 import os
 
-from src.api.services.auth_service import AuthService
-from playwright.sync_api import expect
-from src.models.user import UserLogin
 from src.api.client import APIClient
-from src.api.services.cart_service import CartService
-from src.pages.checkout_page import CheckoutPage
+from src.api.services.auth_service import AuthService
+from src.api.services.invoice_service import InvoiceService
 from src.api.services.product_service import ProductService
-from dotenv import load_dotenv
+from src.models.user import UserLogin
+from src.pages.cart_page import CartPage
+from src.pages.checkout_page import CheckoutPage
+from src.pages.product_page import ProductPage
+from playwright.sync_api import expect
 
-load_dotenv()
 ui_url = os.getenv("UI_URL")
 base_url = os.getenv("BASE_URL")
 
@@ -40,46 +40,52 @@ def test_ui_access_via_token_injection_should_be_authorized(enter_user, browser)
     expect(page.get_by_text(first_name)).to_be_visible()
 
 
-def test_e2e_checkout_flow_with_api_setup_and_db_persistence(enter_user, browser, db_connection):
+def test_e2e_checkout_flow_with_api_setup_and_api_assertion(enter_user, browser):
     """
-    Verify full checkout lifecycle:
-    - Setup: Create cart and add items via API (Hybrid approach).
-    - UI: Complete shipping and payment forms.
-    - Assert: Ensure order record is correctly persisted in the database.
+    Verify full E2E checkout lifecycle.
+    API: Register + login → get JWT token → fetch first in-stock product.
+    UI:  Inject token → navigate to product → add to cart → complete checkout form.
+    Assert: "Thanks for your order!" visible in UI, invoice exists via API.
     """
-    user, response = enter_user
-    user_id = response.json()["id"]
+    user, _ = enter_user
     credentials = UserLogin(email=user.email, password=user.password)
     auth = AuthService(APIClient(base_url))
     token = auth.login(credentials).json()["access_token"]
 
     client = APIClient(base_url)
     product_service = ProductService(client)
-    cart_service = CartService(client)
     products = product_service.get_all().json()["data"]
     product_id = next(p["id"] for p in products if p["in_stock"] is True)
-    cart_service.add_item(user_id, product_id, 1)
 
     page = browser
     page.goto(ui_url)
+    page.wait_for_load_state("networkidle")
     page.evaluate("localStorage.clear()")
     page.evaluate(f"localStorage.setItem('auth-token', '{token}')")
-    page.goto(ui_url)
+    page.goto(f"{ui_url}/product/{product_id}")
+    page.wait_for_load_state("networkidle")
+    ProductPage(page).add_to_cart()
+    page.locator("[data-test='nav-cart']").click()
+    page.wait_for_load_state("networkidle")
+    CartPage(page).proceed_to_checkout()  # opens cart review page
+    page.wait_for_load_state("networkidle")
+    CartPage(page).proceed_to_checkout()  # proceeds to checkout form
+    page.wait_for_load_state("networkidle")
 
-    page.goto(f"{ui_url}/checkout")
-    CheckoutPage(page).fill_address(
+    checkout = CheckoutPage(page)
+    checkout.fill_address(
         street=user.address.street,
         city=user.address.city,
         state=user.address.state,
         country=user.address.country,
         postal_code=user.address.postal_code,
     )
-    CheckoutPage(page).proceed_to_payment()
-    CheckoutPage(page).payment_method("Cash on Delivery")
-    CheckoutPage(page).confirm()
-
-    cur = db_connection.cursor()
-    cur.execute("SELECT * FROM orders WHERE billing_user_id = %s", (user_id,))
-    order = cur.fetchone()
-    cur.close()
-    assert order is not None
+    checkout.proceed_to_payment()
+    checkout.payment_method("Cash on Delivery")
+    checkout.confirm()
+    expect(page.get_by_text("Payment was successful")).to_be_visible()
+    checkout.confirm()
+    expect(page.get_by_text("Thanks for your order!")).to_be_visible()
+    invoice_service = InvoiceService(APIClient(base_url))
+    invoices = invoice_service.get_all(token).json()
+    assert len(invoices["data"]) > 0

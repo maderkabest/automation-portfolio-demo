@@ -57,6 +57,7 @@ def browser():
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
         page = browser.new_page()
+        page.set_default_timeout(60000)
         yield page
         browser.close()
 

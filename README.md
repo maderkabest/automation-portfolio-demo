@@ -7,6 +7,13 @@
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Docker](https://img.shields.io/badge/Docker-PostgreSQL-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
+## Demo
+
+<div align="center">
+  <img src="docs/demo.gif" alt="Test suite demo" width="800">
+  <p><i>Full test suite run: API · Hybrid · UI · Integration layers</i></p>
+</div>
+
 ## What This Project Demonstrates
 
 This framework solves a real-world testing problem: **UI-only E2E tests are slow, flaky, and hard to scale**. Instead, this project practically applies the Testing Pyramid — using the right layer for the right job to maximize speed and reliability.
@@ -16,6 +23,18 @@ This framework solves a real-world testing problem: **UI-only E2E tests are slow
 - **Hybrid layer** combines both: API for setup, UI for user actions — saving 10-15s per test
 - **Integration layer** verifies data persistence directly in PostgreSQL
 - **CI pipeline** runs all layers in parallel with Cloudflare-aware graceful degradation
+
+## 🛠 Tech Stack
+
+| Category       | Tool                           |
+|----------------|--------------------------------|
+| Core           | Python 3.12 + pytest           |
+| Web Automation | Playwright (Sync API)          |
+| API Testing    | Requests + Pydantic v2         |
+| Database       | PostgreSQL + psycopg2          |
+| Code Quality   | Ruff (lint) · Mypy (typing)    |
+| CI/CD          | GitHub Actions                 |
+| Reporting      | Playwright Trace Viewer        |
 
 ## Test Architecture
 
@@ -73,4 +92,7 @@ UI and Hybrid test runs generate a full execution trace with screenshots, DOM sn
 playwright show-trace test-results/trace.zip
 ```
 
-![Playwright Trace Viewer](docs/trace-viewer.png)
+<div align="center">
+  <img src="docs/trace-viewer.png" width="800" alt="Playwright Trace Viewer">
+  <p><i>Playwright Trace Viewer: Full execution trace with DOM snapshots and network activity</i></p>
+</div>

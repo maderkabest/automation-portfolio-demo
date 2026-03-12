@@ -5,13 +5,12 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   lint:
     name: "Lint (Ruff + Mypy)"
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -36,6 +35,8 @@ jobs:
     name: "API Tests"
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,10 +56,12 @@ jobs:
         env:
           BASE_URL: ${{ vars.BASE_URL }}
 
-  integration-tests:  
+  integration-tests:
     name: "Integration Tests"
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     services: 
       postgres:
         image: postgres:16
@@ -101,6 +104,8 @@ jobs:
     name: "UI & Hybrid Tests"
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -158,6 +163,8 @@ jobs:
     needs: [api-tests, integration-tests]
     runs-on: ubuntu-latest
     if: always()
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
       contents: write
       pages: write

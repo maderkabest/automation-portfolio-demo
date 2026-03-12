@@ -1,13 +1,13 @@
 <h1 align="center">Hybrid Test Automation Portfolio</h1>
 
 <p align="center">
-[![CI](https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Playwright](https://img.shields.io/badge/Playwright-latest-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/python/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
-[![Docker](https://img.shields.io/badge/Docker-PostgreSQL-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPjwvc3ZnPg==)](https://maderkabest.github.io/automation-portfolio-demo/)
+<a href="https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml"><img src="https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python"></a>
+<a href="https://playwright.dev/python/"><img src="https://img.shields.io/badge/Playwright-latest-2EAD33?logo=playwright&logoColor=white" alt="Playwright"></a>
+<a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+<a href="https://mypy-lang.org/"><img src="https://www.mypy-lang.org/static/mypy_badge.svg" alt="Checked with mypy"></a>
+<a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-PostgreSQL-2496ED?logo=docker&logoColor=white" alt="Docker"></a>
+<a href="https://maderkabest.github.io/automation-portfolio-demo/"><img src="https://img.shields.io/badge/Allure-Report-brightgreen" alt="Allure Report"></a>
 </p>
 
 ## Test Execution Demo
@@ -51,7 +51,7 @@ This framework solves a common CI/CD bottleneck: slow releases caused by heavy U
 | Integration | `tests/integration/` | Direct PostgreSQL queries via `psycopg2` for backend state verification |
 
 <div align="center">
-  <img src="docs/test automation framework architecture.drawio.png" alt="Framework Architecture" width="800">
+  <img src="docs/test automation framework architecture.drawio.png" alt="Framework Architecture" width="600">
   <p><i>Framework architecture: how API, UI, Hybrid and Integration layers interact</i></p>
 </div>
 
@@ -102,13 +102,13 @@ playwright show-trace test-results/trace.zip
 ```
 
 <div align="center">
-  <img src="docs/trace-viewer.png" width="600" alt="Playwright Trace Viewer">
+  <img src="docs/trace-viewer.png" width="700" alt="Playwright Trace Viewer">
   <p><i>Playwright Trace Viewer: Full execution trace with DOM snapshots and network activity</i></p>
 </div>
 
 #### 📊 Allure Report
 
-**[▶ View Live Allure Report](https://maderkabest.github.io/automation-portfolio-demo/)**
+**[▶ View Live Allure Report](https://maderkabest.github.io/automation-portfolio-demo/)** _(API + Integration layers — UI/Hybrid blocked by Cloudflare WAF in CI; run locally for full 7-test report)_
 
 Every test run can generate a rich Allure HTML report with per-test breakdown, severity levels, and automatic failure screenshots.
 

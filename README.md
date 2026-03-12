@@ -81,6 +81,18 @@ pytest tests/integration/ -v
 pytest tests/ui/ tests/hybrid/ -v
 ```
 
+Alternatively, use the `Makefile` shortcuts:
+
+```bash
+make install          # Install dependencies + Playwright browser
+make test-api         # Run API tests only
+make test-ui          # Run UI tests only
+make test-hybrid      # Run hybrid tests only
+make test-integration # Run database integration tests only
+make test             # Start Docker + run all test suites
+make lint             # Run Ruff linter and Mypy type checker
+```
+
 ## 🛡️ CI/CD Resilience & Infrastructure Constraints
 
 The UI and Hybrid test suites (tests/ui/, tests/hybrid/) run flawlessly on local machines. However, in real-world CI/CD environments like GitHub Actions, the target demo website (practicesoftwaretesting.com) actively blocks datacenter IPs via Cloudflare WAF (returning HTTP 403 + cf-mitigated: challenge).

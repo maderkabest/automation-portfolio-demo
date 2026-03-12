@@ -2,6 +2,7 @@
 
 import os
 
+import allure
 from src.api.services.auth_service import AuthService
 from src.api.client import APIClient
 from src.models.user import UserLogin
@@ -9,6 +10,11 @@ from src.models.user import UserLogin
 base_url = os.getenv("BASE_URL")
 
 
+@allure.epic("User Management")
+@allure.feature("Authentication API")
+@allure.title("Register new user returns HTTP 201")
+@allure.description("Verify that registering a new user via API returns a 201 Created status code.")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_register_returns_201(enter_user):
     """
     Verify user registration returns HTTP 201.
@@ -19,6 +25,11 @@ def test_register_returns_201(enter_user):
     assert response.status_code == 201
 
 
+@allure.epic("User Management")
+@allure.feature("Authentication API")
+@allure.title("Login with valid credentials returns access token")
+@allure.description("Verify that an existing user can log in and receive a valid JWT access token in the response.")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_login_returns_token(enter_user):
     """
     Verify login returns a valid JWT access token.

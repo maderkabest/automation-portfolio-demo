@@ -2,6 +2,8 @@
 
 import os
 import re
+
+import allure
 from src.pages.login_page import LoginPage
 from playwright.sync_api import expect
 from dotenv import load_dotenv
@@ -10,6 +12,13 @@ load_dotenv()
 ui_url = os.getenv("UI_URL")
 
 
+@allure.epic("User Management")
+@allure.feature("UI Login")
+@allure.title("User can log in via UI with API-registered credentials")
+@allure.description(
+    "Register a user via API, then verify the UI login flow redirects to /account and shows 'My account' heading."
+)
+@allure.severity(allure.severity_level.CRITICAL)
 def test_user_can_login_with_valid_credentials(enter_user, browser):
     """
     Verify UI login flow with API-created user.

@@ -1,6 +1,7 @@
 """Global pytest fixtures shared across all test modules."""
 
 import os
+import allure
 import pytest
 import psycopg2
 
@@ -14,6 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 fake = Faker("en_US")
 base_url = os.getenv("BASE_URL")
+ui_url = os.getenv("UI_URL")
 db_host = os.getenv("DB_HOST")
 db_port = os.getenv("DB_PORT")
 db_database = os.getenv("DB_NAME")
@@ -56,9 +58,12 @@ def enter_user():
 def browser():
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context()
+        context.tracing.start(screenshots=True, snapshots=True, sources=True)
+        page = context.new_page()
         page.set_default_timeout(60000)
         yield page
+        context.tracing.stop(path="test-results/trace.zip")
         browser.close()
 
 
@@ -67,3 +72,29 @@ def db_connection():
     conn = psycopg2.connect(host=db_host, port=db_port, database=db_database, user=db_user, password=db_password)
     yield conn
     conn.close()
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Attach a screenshot to Allure report on test failure for UI tests."""
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call" and report.failed:
+        page = item.funcargs.get("browser")
+        if page is not None:
+            screenshot = page.screenshot()
+            allure.attach(screenshot, name="screenshot on failure", attachment_type=allure.attachment_type.PNG)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def allure_env_setup(request):
+    """Automatically generates the Environment block for the Allure report."""
+    yield
+    allure_dir = request.config.getoption("--alluredir", default=None)
+    if allure_dir:
+        env_file = os.path.join(allure_dir, "environment.properties")
+        with open(env_file, "w") as f:
+            f.write("OS=Windows\n")
+            f.write("Browser=Chromium (Playwright)\n")
+            f.write(f"API_URL={os.getenv('BASE_URL', base_url)}\n")
+            f.write(f"UI_URL={os.getenv('UI_URL', ui_url)}\n")

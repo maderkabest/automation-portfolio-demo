@@ -1,6 +1,16 @@
 """Integration tests: direct database read/write via psycopg2."""
 
+import allure
 
+
+@allure.epic("Order Management")
+@allure.feature("Database Integration")
+@allure.title("Order can be inserted and deleted directly in the database")
+@allure.description(
+    "Verify direct DB access: INSERT an order, assert it exists, DELETE it, assert it is gone. "
+    "Uses psycopg2 against the local Docker PostgreSQL instance."
+)
+@allure.severity(allure.severity_level.MINOR)
 def test_manual_order_insertion_and_deletion(db_connection):
     """
     Verify direct DB write and delete operations via psycopg2.

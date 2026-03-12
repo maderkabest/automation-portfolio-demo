@@ -1,6 +1,8 @@
 """UI tests for product details."""
 
 import os
+
+import allure
 from playwright.sync_api import expect
 from dotenv import load_dotenv
 
@@ -8,6 +10,14 @@ load_dotenv()
 ui_url = os.getenv("UI_URL")
 
 
+@allure.epic("Product Catalog")
+@allure.feature("Product Page UI")
+@allure.title("Product page displays name, price and Add to Cart button")
+@allure.description(
+    "Navigate to the first product from the home page and verify that product name, "
+    "unit price and 'Add to cart' button are visible, and 'Out of stock' label is not shown."
+)
+@allure.severity(allure.severity_level.NORMAL)
 def test_product_page_displays_details(browser):
     """
     Verify product page displays required details.

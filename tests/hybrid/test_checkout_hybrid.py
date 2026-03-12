@@ -2,6 +2,7 @@
 
 import os
 
+import allure
 from src.api.client import APIClient
 from src.api.services.auth_service import AuthService
 from src.api.services.invoice_service import InvoiceService
@@ -16,6 +17,14 @@ ui_url = os.getenv("UI_URL")
 base_url = os.getenv("BASE_URL")
 
 
+@allure.epic("User Management")
+@allure.feature("Session Management")
+@allure.title("UI session restored via JWT token injection into localStorage")
+@allure.description(
+    "Obtain a JWT via API login, inject it into browser localStorage, "
+    "and verify the UI recognizes the user session without manual login."
+)
+@allure.severity(allure.severity_level.NORMAL)
 def test_ui_access_via_token_injection_should_be_authorized(enter_user, browser):
     """
     Test session restoration via API token.
@@ -32,6 +41,7 @@ def test_ui_access_via_token_injection_should_be_authorized(enter_user, browser)
     token = data["access_token"]
 
     page = browser
+    page.context.clear_cookies()
     page.goto(ui_url)
     page.evaluate("localStorage.clear()")
     page.evaluate(f"localStorage.setItem('auth-token', '{token}')")
@@ -40,6 +50,14 @@ def test_ui_access_via_token_injection_should_be_authorized(enter_user, browser)
     expect(page.get_by_text(first_name)).to_be_visible()
 
 
+@allure.epic("Order Management")
+@allure.feature("E2E Checkout")
+@allure.title("Full checkout flow: API setup → UI purchase → API invoice assertion")
+@allure.description(
+    "Register and log in via API, inject token into browser, add an in-stock product "
+    "to cart via UI, complete the checkout form, and verify the invoice is created via API."
+)
+@allure.severity(allure.severity_level.CRITICAL)
 def test_e2e_checkout_flow_with_api_setup_and_api_assertion(enter_user, browser):
     """
     Verify full E2E checkout lifecycle.
@@ -58,6 +76,7 @@ def test_e2e_checkout_flow_with_api_setup_and_api_assertion(enter_user, browser)
     product_id = next(p["id"] for p in products if p["in_stock"] is True)
 
     page = browser
+    page.context.clear_cookies()
     page.goto(ui_url)
     page.wait_for_load_state("networkidle")
     page.evaluate("localStorage.clear()")

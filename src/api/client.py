@@ -10,8 +10,8 @@ class APIClient:
     def get(self, path, headers=None):
         return requests.get(self.base_url + path, headers=headers)
 
-    def post(self, path, json, headers=None):
-        return requests.post(self.base_url + path, json=json, headers=headers)
+    def post(self, path, json=None, data=None, headers=None):
+        return requests.post(self.base_url + path, json=json, data=data, headers=headers)
 
     def delete(self, path):
         return requests.delete(self.base_url + path)

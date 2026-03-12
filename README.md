@@ -1,11 +1,14 @@
-# Hybrid Test Automation Portfolio
+<h1 align="center">Hybrid Test Automation Portfolio</h1>
 
+<p align="center">
 [![CI](https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/maderkabest/automation-portfolio-demo/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-latest-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/python/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Docker](https://img.shields.io/badge/Docker-PostgreSQL-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPjwvc3ZnPg==)](https://maderkabest.github.io/automation-portfolio-demo/)
+</p>
 
 ## Test Execution Demo
 
@@ -82,21 +85,11 @@ pytest tests/ui/ tests/hybrid/ -v
 
 The UI and Hybrid test suites (tests/ui/, tests/hybrid/) run flawlessly on local machines. However, in real-world CI/CD environments like GitHub Actions, the target demo website (practicesoftwaretesting.com) actively blocks datacenter IPs via Cloudflare WAF (returning HTTP 403 + cf-mitigated: challenge).
 
-How this framework handles it (Graceful Degradation):
 Instead of allowing the pipeline to fail blindly and block deployments, I implemented a resilient CI strategy:
 
-A pre-check step proactively detects Cloudflare blocking.
-
-If a block is detected, the pipeline gracefully skips UI execution and posts a summary message explaining the environment constraint.
-
-API and Integration tests continue to run and pass normally, ensuring developers still get critical feedback on the backend and database layers.
-
-**How this is handled in this project:**
-
-- The CI pipeline includes a pre-check step that detects Cloudflare blocking
-- If a block is detected, the pipeline gracefully skips UI test execution
-- A summary message is posted to the Workflow Summary explaining the limitation
-- API and Integration tests continue to run and pass normally
+- A pre-check step proactively detects Cloudflare blocking
+- If a block is detected, the pipeline gracefully skips UI test execution and posts a summary message to the Workflow Summary explaining the limitation
+- API and Integration tests continue to run and pass normally, ensuring developers still get critical feedback on the backend and database layers
 
 To run the full E2E suite, execute the tests locally following the setup instructions above.
 
@@ -109,6 +102,26 @@ playwright show-trace test-results/trace.zip
 ```
 
 <div align="center">
-  <img src="docs/trace-viewer.png" width="800" alt="Playwright Trace Viewer">
+  <img src="docs/trace-viewer.png" width="600" alt="Playwright Trace Viewer">
   <p><i>Playwright Trace Viewer: Full execution trace with DOM snapshots and network activity</i></p>
 </div>
+
+#### 📊 Allure Report
+
+**[▶ View Live Allure Report](https://maderkabest.github.io/automation-portfolio-demo/)**
+
+Every test run can generate a rich Allure HTML report with per-test breakdown, severity levels, and automatic failure screenshots.
+
+Tests are annotated with:
+- `@allure.epic` / `@allure.feature` — organise results by business domain
+- `@allure.severity` — filter by `CRITICAL`, `NORMAL`, `MINOR`
+- `@allure.title` / `@allure.description` — human-readable names and context
+- **Auto-screenshot on failure** — for any UI/Hybrid test that fails, a browser screenshot is automatically attached to the report
+
+```bash
+# Run tests and collect results
+pytest tests/ --alluredir=allure-results
+
+# Open interactive report in browser
+allure serve allure-results
+```

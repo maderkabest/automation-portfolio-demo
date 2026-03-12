@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "Verify that registering a new user via API returns a 201 Created status code.","0","Register new user returns HTTP 201","tests.api","2026-03-12","passed","2026-03-12","","test_auth_api","",""
 "Verify direct DB access: INSERT an order, assert it exists, DELETE it, assert it is gone. Uses psycopg2 against the local Docker PostgreSQL instance.","3","Order can be inserted and deleted directly in the database","tests.integration","2026-03-12","passed","2026-03-12","","test_orders_db","",""
-"Verify that an existing user can log in and receive a valid JWT access token in the response.","510","Login with valid credentials returns access token","tests.api","2026-03-12","passed","2026-03-12","","test_auth_api","",""
+"Verify that an existing user can log in and receive a valid JWT access token in the response.","547","Login with valid credentials returns access token","tests.api","2026-03-12","passed","2026-03-12","","test_auth_api","",""

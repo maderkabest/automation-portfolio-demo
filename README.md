@@ -108,7 +108,7 @@ playwright show-trace test-results/trace.zip
 
 #### 📊 Allure Report
 
-**<a href="https://maderkabest.github.io/automation-portfolio-demo/" target="_blank">▶ View Live Allure Report</a>** _(API + Integration layers — UI/Hybrid blocked by Cloudflare WAF in CI; run locally for full 7-test report)_
+**<a href="https://maderkabest.github.io/automation-portfolio-demo/">▶ View Live Allure Report</a>** _(API + Integration layers — UI/Hybrid blocked by Cloudflare WAF in CI; run locally for full 7-test report)_
 
 Every test run can generate a rich Allure HTML report with per-test breakdown, severity levels, and automatic failure screenshots.
 

@@ -9,7 +9,10 @@ class AuthService:
         self.client = client
 
     def register(self, user: UserRegister):
-        return self.client.post("/users/register", json=user.model_dump())
+        payload = user.model_dump()
+        address = payload.pop("address")
+        flat = {**payload, **{f"address[{k}]": v for k, v in address.items()}}
+        return self.client.post("/users/register", data=flat)
 
     def login(self, user: UserLogin):
-        return self.client.post("/users/login", json=user.model_dump())
+        return self.client.post("/users/login", data=user.model_dump())

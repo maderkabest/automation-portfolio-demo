@@ -137,3 +137,15 @@ pytest tests/ --alluredir=allure-results
 # Open interactive report in browser
 allure serve allure-results
 ```
+
+---
+
+## 🌟 More of my work
+
+### [modern-ui-testing-ts](https://github.com/maderkabest/modern-ui-testing-ts) — TypeScript · Playwright · Axe-core
+
+A frontend-focused test suite:
+- **Visual Regression Testing** — Catching UI mutations and layout changes using automated image diffing.
+- **Accessibility (A11y) Auditing** — Validating the DOM against WCAG standards using `axe-core`.
+
+While my primary expertise is in Python E2E automation, I am actively expanding my skillset into TypeScript to test modern frontend practices.
